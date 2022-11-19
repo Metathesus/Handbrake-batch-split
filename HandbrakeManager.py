@@ -3,13 +3,10 @@ import json
 import copy
 from tkinter import *
 from tkinter import filedialog
+from tkinter.ttk import *
 from os.path import isfile, join, abspath
-from functools import partial
 
-
-PositionY=[0,10,45,80,110,140,170,210,245,280,315]
-
-def RGB(rgb):
+def rgb(rgb):
   return "#%02x%02x%02x" % rgb
 
 def open_folder():
@@ -20,7 +17,6 @@ def open_folder():
 def open_file(title,extensions):
   file = tk.filedialog.askopenfilename(title=title, filetypes=[("File",extensions)])
   if file:
-    print(file)
     return file
 
 
@@ -41,20 +37,18 @@ def Preview_Window(preview):
   newWindow = Toplevel(root)
   newWindow.title("Preview")
   newWindow.geometry("600x600")
-  TextWidget=tk.Text(newWindow, height=500, width=380)
+  TextWidget=Text(newWindow, height=500, width=380)
   TextWidget.pack(side=tk.RIGHT, fill=tk.Y)
   TextWidget.insert(tk.END, preview)
 
-
 ################################################Lire le JSON et extraire les dictionnaires et définir les variables###########################################################
-def Open_JSON_Source_File():
-  JSON_Source_File=open_file('Select Original JSON File',".json")
-  print(JSON_Source_File)
-  JSON_Source_File_Browse_Value.set(JSON_Source_File)
-  Read_JSON_Source_File(JSON_Source_File) 
+def open_JSON_source_file():
+  JSON_source_file=open_file('Select Original JSON File',".json")
+  JSON_source_file_browse_Value.set(JSON_source_file)
+  read_JSON_source_file(JSON_source_file) 
 
 
-def Read_JSON_Source_File(JSON_Source_File):
+def read_JSON_source_file(JSON_source_file):
   global main_list, main_dict, job_dict
   global destination_dict
   global source_dict
@@ -63,7 +57,7 @@ def Read_JSON_Source_File(JSON_Source_File):
   global dest_ext
   global video_ext_for_tk
 
-  f = open(JSON_Source_File,"r")
+  f = open(JSON_source_file,"r")
   data = f.read()
   main_list = json.loads(data)
   main_dict=main_list[0]
@@ -76,40 +70,60 @@ def Read_JSON_Source_File(JSON_Source_File):
   destination_dict_file=destination_dict["File"]
   dest_ext=destination_dict_file[-4:]
   video_ext_for_tk='[("Videos files", '+source_ext+')]'
-  print(source_ext)
-
- 
+  print('don\'t close this windows if you want to see the output of HandBrakeCLI')
 
 ###################################################  Root #############################################################################################
-root = tk.Tk()
+
+root = Tk()
 root.title("Handbrake Splitter")
-root.geometry("1280x500")
-root.config(background=RGB((30,30,30)))
+root.geometry("1150x280")
+root.config(background=rgb((30,30,30)))
+
+###################################################  Style après le root############################################################################################# 
+PositionY=[10000,10,45,80,115,140,170,210,245,280,315]
+
+grey=rgb((30,30,30))
+grey2=rgb((90,90,90))
+
+
+style = Style()
+#style.theme_use('default')
+
+style.configure("VAD.TLabel", foreground="white", background=grey)
+style.configure("VAD.TFrame", foreground="white", background=grey)
+style.configure("VAD.TCanvas", foreground="white", background=grey)
+style.configure("VAD.TCheckbutton", foreground="white", background=grey)
+style.configure("VAD.TButton", foreground="black", background=grey2)
+style.configure("VADSmall.TButton", font=("Helvetica",12,"bold"), pady=2)
+style.configure("VAD.TEntry", foreground="black", background=grey2)
 
 ##########################################################Set Original JSON File###################################################################
 
-JSON_Source_File_Browse_Value = StringVar()
-JSON_Source_File_Browse_Value.set('Open Original JSON from Handbrake Export for CLI')
-JSON_Source_File_Browse_Entry = tk.Entry(root, textvariable=JSON_Source_File_Browse_Value,  bg=RGB((90,90,90)), fg=RGB((255,255,255)))
-JSON_Source_File_Browse_Entry.place(x=10, y=PositionY[1], width=500, height=25)   
-JSON_Source_File_Browse_Button=tk.Button(root, text="Browse", command=Open_JSON_Source_File, pady=2, padx=10)
-JSON_Source_File_Browse_Button.place(x=520, y=PositionY[1], width=90, height=25) 
+JSON_source_file_browse_Value = StringVar()
+JSON_source_file_browse_Value.set('Open Original JSON from Handbrake Export for CLI')
+JSON_source_file_browse_Entry = Entry(root, textvariable=JSON_source_file_browse_Value, style="VAD.TEntry")
+JSON_source_file_browse_Entry.place(x=10, y=PositionY[1], width=500, height=25)   
+JSON_source_file_browse_Button=Button(root, text="Browse", command=open_JSON_source_file, style="VAD.TButton")
+JSON_source_file_browse_Button.place(x=520, y=PositionY[1], width=90, height=25) 
+#style="VAD.TButton",
 
 ###########     Bouton => Set source folder avec bouton parcourir et ouvre la fenetre avec la liste des fichiers à cocher    ############################
 def Set_Source_Folder():
   Source_folder=open_folder()
-  Source_Browse_Value.set(Source_folder)
+  source_browse_Value.set(Source_folder)
   fileslist_check_function(Source_folder)
 
-Source_Browse_Value = StringVar()
-Source_Browse_Value.set('Videos Source Folder')
-Source_Browse_Entry = tk.Entry(root, textvariable=Source_Browse_Value,  bg=RGB((90,90,90)), fg=RGB((255,255,255)))
-Source_Browse_Entry.place(x=10, y=PositionY[2], width=500, height=25)  
-Source_Browse_Button=tk.Button(root, text="Browse", command=Set_Source_Folder, pady=2, padx=10)
-Source_Browse_Button.place(x=520, y=PositionY[2], width=90, height=25) 
-
+source_browse_Value = StringVar()
+source_browse_Value.set('Videos Source Folder')
+source_browse_Entry = Entry(root, textvariable=source_browse_Value, style="VAD.TEntry")
+source_browse_Entry.place(x=10, y=PositionY[2], width=500, height=25)  
+source_browse_Button=Button(root, text="Browse", command=Set_Source_Folder, style="VAD.TButton")
+source_browse_Button.place(x=520, y=PositionY[2], width=90, height=25) 
 
 ####################      Liste des fichiers / Fenetres des fichiers à traiter     #############################################################################
+
+def mousewheel(event):
+  canvas_fileslist.yview_scroll(int(-1*(event.delta)/120), "units")
 
 def fileslist_check_function(sourcepath):
   #nombre de fichier pour déterminer la taille de la fenetre
@@ -117,17 +131,19 @@ def fileslist_check_function(sourcepath):
   files_number=len(fileslist)
 
   #Création du canvas > frame > canvas > cases à cocher
-  root_frame_fileslist=tk.Frame(root, bg= RGB((30,30,30)), relief=FLAT)
-  root_frame_fileslist.place(x=620, y=0, width=500, height=300)
-  canvas_fileslist=tk.Canvas(root_frame_fileslist, bg= RGB((30,30,30)), highlightthickness=0, borderwidth=0)
-  scrollbar_fileslist = tk.Scrollbar(root_frame_fileslist, orient=VERTICAL)
+  global canvas_fileslist
+  root_frame_fileslist=Frame(root, style="VAD.TFrame")
+  root_frame_fileslist.place(x=620, y=10, width=500, height=260)
+  canvas_fileslist=Canvas(root_frame_fileslist, highlightthickness=0, borderwidth=0, bg=rgb((30,30,30)))
+  scrollbar_fileslist = Scrollbar(root_frame_fileslist, orient=VERTICAL)
   scrollbar_fileslist.pack(side = RIGHT, fill = Y)
   scrollbar_fileslist.config(command=canvas_fileslist.yview)
-  canvas_fileslist.config(width=500, height=files_number*25, yscrollcommand=scrollbar_fileslist.set, scrollregion=(0,0,500,files_number*25))
+  canvas_fileslist.config(width=500, height=files_number*23, yscrollcommand=scrollbar_fileslist.set, scrollregion=(0,0,500,files_number*23))
+  canvas_fileslist.bind_all("<MouseWheel>", mousewheel)
   canvas_fileslist.pack(side=LEFT,expand=True,fill= BOTH)
-  frame_fileslist = tk.Frame(canvas_fileslist, bg= RGB((30,30,30)))
+  frame_fileslist = Frame(canvas_fileslist, style="VAD.TFrame")
   canvas_fileslist.create_window(0,0, window=frame_fileslist, anchor="nw")
-  
+
   #Création des cases à cocher
   
   global file_Check_Vars
@@ -137,7 +153,7 @@ def fileslist_check_function(sourcepath):
   for fileindex,file in enumerate(fileslist):
     file_Check_Vars.append(IntVar(value=1))
     file_Check_Buttons.append("file_Check_Button_"+str(fileindex))
-    globals()[f'{file_Check_Buttons[fileindex]}']=tk.Checkbutton(frame_fileslist, text=file, pady=1, padx=10, bg= RGB((30,30,30)), fg= RGB((200,200,200)), onvalue=int(1), offvalue=int(0), selectcolor="black", anchor=W, variable = file_Check_Vars[fileindex])
+    globals()[f'{file_Check_Buttons[fileindex]}']=Checkbutton(frame_fileslist, text=file, onvalue=int(1), offvalue=int(0), variable = file_Check_Vars[fileindex], style="VAD.TCheckbutton")
     globals()[f'{file_Check_Buttons[fileindex]}'].pack(side=TOP, anchor=W)#.place(x=0, y=10+fileindex*20, width=480, height=20)
 
 
@@ -145,64 +161,85 @@ def fileslist_check_function(sourcepath):
 
 def Set_Destination_Folder():
    Destination_folder=open_folder()
-   Destination_Browse_Value.set(Destination_folder)
+   destination_browse_Value.set(Destination_folder)
 
-Destination_Browse_Value = StringVar()
-Destination_Browse_Value.set('Videos Destination Folder')
-Destination_Browse_Entry = tk.Entry(root, textvariable=Destination_Browse_Value,  bg=RGB((90,90,90)), fg=RGB((255,255,255)))
-Destination_Browse_Entry.place(x=10, y=PositionY[3], width=500, height=25)   
-Destination_Browse_Button=tk.Button(root, text="Browse", command=Set_Destination_Folder, pady=2, padx=10)
-Destination_Browse_Button.place(x=520, y=PositionY[3], width=90, height=25) 
+destination_browse_Value = StringVar()
+destination_browse_Value.set('Videos Destination Folder')
+destination_browse_Entry = Entry(root, textvariable=destination_browse_Value, style="VAD.TEntry")
+destination_browse_Entry.place(x=10, y=PositionY[3], width=500, height=25)   
+destination_browse_Button=Button(root, text="Browse", command=Set_Destination_Folder, style="VAD.TButton")
+destination_browse_Button.place(x=520, y=PositionY[3], width=90, height=25) 
 
 ######################       Entrée de temps / Définition des ranges avec champs de saisie et bouton + ############################################################
-
  
-
 #define times range   
-Start_Time=[]
-End_Time=[]
-Time_ranges_readable=[]
-def Set_Times_Ranges():
-  global Start_Time
-  global End_Time
-  global Time_ranges_readable
-  try: Start_Time
+
+def add_times_ranges():
+  global starts_time
+  global ends_time
+  global time_ranges_readable
+  starts_time=[]
+  ends_time=[]
+  time_ranges_readable=[]
+
+  try: starts_time
   except NameError:
-    Start_Time=[]
-    End_Time=[]
-    Time_ranges_readable=[]
+    starts_time=[]
+    ends_time=[]
+    time_ranges_readable=[]
   else:
-    if start_time_entry.get() != "" and len(Start_Time)<5: 
-      Start_Time.append(str(int(start_time_entry.get())*90000))
-      End_Time.append(str(int(end_time_entry.get())*90000))
-      Time_ranges_readable.append(str(int(start_time_entry.get()))+'s to '+str(int(end_time_entry.get()))+'s , ')
-  Time_Range_label.config(text=Time_ranges_readable)
+    if starts_time_entry.get() != "" and len(starts_time)<5: 
+      starts_time.append(int(starts_time_entry.get())*90000)
+      ends_time.append(int(ends_time_entry.get())*90000)
+      time_ranges_readable.append(str(int(starts_time_entry.get()))+'s to '+str(int(ends_time_entry.get()))+'s')
+  time_range_label.config(text=time_ranges_readable)
 
-#########################################Times button & Labels############################################################
-Split_method_var = IntVar()
-Split_method_Buttons = tk.Checkbutton(root, text="Change ranges", pady=1, padx=10, bg= RGB((30,30,30)), fg= RGB((200,200,200)), onvalue= 1, offvalue= 0, selectcolor="black", anchor=W, variable = Split_method_var)
-Split_method_Buttons.place(x=0, y=PositionY[5], width=120, height=20)
+def remove_times_ranges():
+  global starts_time
+  global ends_time
+  global time_ranges_readable
+  del starts_time[-1]
+  del ends_time[-1]
+  del time_ranges_readable[-1]
+  time_range_label.config(text=time_ranges_readable)
 
-time_label = tk.Label(root, text="Start to  End Time (s) :",  bg=RGB((30,30,30)), fg=RGB((255,255,255)), anchor="w")
-time_label.place(x=150, y=PositionY[5], width=150, height=20)
+#########################################Enable New ranges  button & Labels############################################################
+def ranges_state():
+  if split_method.get()==0:
+    ranges_frame.place(y=PositionY[0])
+  if split_method.get()==1:
+    ranges_frame.place(y=PositionY[5])
 
-start_time_entry_var=""
-start_time_entry = tk.Entry(root, textvariable=start_time_entry_var,  bg=RGB((90,90,90)), fg=RGB((255,255,255)))
-start_time_entry.place(x=310, y=PositionY[5], width=40, height=20)
+split_method = IntVar()
+split_method_Buttons = Checkbutton(root, text="Change ranges", onvalue= 1, offvalue= 0, variable = split_method, command=ranges_state, style="VAD.TCheckbutton")
+split_method_Buttons.place(x=10, y=PositionY[4], width=120, height=20)
 
-end_time_entry_var=""
-end_time_entry = tk.Entry(root, textvariable=end_time_entry_var,  bg=RGB((90,90,90)), fg=RGB((255,255,255)))
-end_time_entry.place(x=360, y=PositionY[5], width=40, height=20)
+######################################### New ranges  button & Labels############################################################
+ranges_frame=Frame(root, style="VAD.TFrame")
+ranges_frame.place(x=10, y=PositionY[5], width=500, height=50)
 
-Remove_Time_Range_Button = tk.Button(root, text="-", command = Set_Times_Ranges, pady=5, padx=10, font=("helvetica 12 bold"))
-Remove_Time_Range_Button.place(x=420, y=PositionY[5], width=20, height=20) 
-Add_Time_Range_Button = tk.Button(root, text="+", command = Set_Times_Ranges, pady=5, padx=10, font=("helvetica 12 bold"))
-Add_Time_Range_Button.place(x=450, y=PositionY[5], width=20, height=20) 
 
-Time_Range_label = tk.Label(root, text="No time range set",  bg=RGB((60,60,60)), fg=RGB((255,255,255)), anchor="w")
-Time_Range_label.place(x=10, y=PositionY[6], width=500, height=20)
+time_label = Label(ranges_frame, text="Start to  End Time (s) :", anchor="w", style="VAD.TLabel")
+time_label.place(x=0, y=0, height=20)
 
-########################       Changer les paramètres de coupure    ###########################################################################################################
+starts_time_entry_var=""
+starts_time_entry = Entry(ranges_frame, textvariable=starts_time_entry_var, style="VAD.TEntry")
+starts_time_entry.place(x=120, y=0, width=40, height=20)
+
+ends_time_entry_var=""
+ends_time_entry = Entry(ranges_frame, textvariable=ends_time_entry_var, style="VAD.TEntry")
+ends_time_entry.place(x=165, y=0, width=40, height=20)
+
+remove_time_range_Button = Button(ranges_frame, text="-", command = remove_times_ranges, style="VADSmall.TButton")
+remove_time_range_Button.place(x=220, y=0, width=20, height=20) 
+
+add_time_range_Button = Button(ranges_frame, text="+", command = add_times_ranges, style="VADSmall.TButton")
+add_time_range_Button.place(x=245, y=0, width=20, height=20) 
+
+time_range_label = Label(ranges_frame, text="No time range set", anchor="w", style="VAD.TLabel")
+time_range_label.place(x=0, y=25, width=500, height=20)
+
+ranges_state()
 
 
 
@@ -210,10 +247,14 @@ Time_Range_label.place(x=10, y=PositionY[6], width=500, height=20)
 ##########################################################################################################################################################################
 ##########################################################################################################################################################################
  #files variables
-def JSON_make(file_Check_Vars):
-  JSONContent=[]
-  sourcepath=Source_Browse_Entry.get()
-  destpath=Destination_Browse_Entry.get()  
+def generate_JSON():
+  global file_Check_Vars
+  global starts_time
+  global ends_time
+  global split_method
+  JSONcontent=[]
+  sourcepath=source_browse_Entry.get()
+  destpath=destination_browse_Entry.get()  
 
   fileslist=get_files_list(sourcepath)
 
@@ -221,65 +262,61 @@ def JSON_make(file_Check_Vars):
   for i,file in enumerate(fileslist):
     if file_Check_Vars[i].get() == 1:
         fileslisttoprocess.append(file)
-  #récupérer la variable pour savoir si on splitte par chapitre ou en fonction du temps      
-  Split_method=Split_method_var.get()
-  #Formatage des elements à intégrer dans le JSON
-  destination_dict_file=destination_dict["File"]
-  dest_ext=destination_dict_file[-4:]
-
-
+      
   #process JSON
   
-  Split_method=Split_method_var.get()
-
-  #creation de dictionnaire temporaire  
-
   
-  if Split_method == 0:
-
+  if split_method.get() == 0:
     for filename in fileslisttoprocess:
       filename_noext=filename[:-4]
       source_dict["Path"]=sourcepath+'\\'+filename
       destination_dict["File"]=destpath+'\\'+ filename_noext+'_1'+dest_ext
-      JSONContent.append(copy.deepcopy(main_dict))
+      JSONcontent.append(copy.deepcopy(main_dict))
 
-  if Split_method == 1:
+  if split_method.get() == 1:
     for filename in fileslisttoprocess:
       filename_noext=filename[:-4]
       source_dict["Path"]=sourcepath+'\\'+filename
       destination_dict["File"]=destpath+'\\'+ filename_noext+'_1'+dest_ext
-      for RangeIndex in enumerate(Start_Time):
+      for range_index,start_time in enumerate(starts_time):
         range_dict["Type"]="time"
-        range_dict["Start"]=Start_Time[RangeIndex]
-        range_dict["End"]=End_Time[RangeIndex]
-        JSONContent.append(copy.deepcopy(main_dict))
-  return JSONContent  
+        range_dict["Start"]=starts_time[range_index]
+        range_dict["End"]=ends_time[range_index]
+        JSONcontent.append(copy.deepcopy(main_dict))
+  return JSONcontent  
 ######################################################## Button => Lance la fabrication du Fichier JSON, formate et Lance le preview #############################
 
-def Make_JSON_Press():
+def generate_JSON_Press():
   global JSONFormatedContent
-  JSONContent=JSON_make(file_Check_Vars)
-  JSONFormatedContent=json.dumps(JSONContent, indent=2)
+  JSONcontent=generate_JSON()
+  JSONFormatedContent=json.dumps(JSONcontent, indent=2)
+generate_JSON_Button=Button(root, text="Generate HandbrakeCLI Queue File (JSON)", command=generate_JSON_Press, style="VAD.TButton")
+generate_JSON_Button.place(x=10, y=PositionY[7], width=290, height=25) 
+
+
+def preview_JSON_press():
+  global JSONFormatedContent
   Preview_Window(JSONFormatedContent)
-Preview_Button=tk.Button(root, text="Make and Preview JSON", command=Make_JSON_Press, pady=2, padx=10)
-Preview_Button.place(x=10, y=PositionY[7], width=500, height=25) 
+
+preview_Button=Button(root, text="Preview Queue File (JSON)", command=generate_JSON_Press, style="VAD.TButton")
+preview_Button.place(x=310, y=PositionY[7], width=200, height=25) 
 
 
 ########################################################### Fonction => Ecrit le JSON ################################################################ 
 def write_JSONfile():
-  JSONFile =open(Source_Browse_Entry.get()+"\\handbrake.JSON", "w")
-  JSONFile.write(str(JSONFormatedContent))
-  JSONFile.close  
-#JSON_Write_Button=tk.Button(root, text="Write JSON", command=write_JSONfile, pady=2, padx=10)
+  JSONfile =open(source_browse_Entry.get()+"\\handbrake.JSON", "w")
+  JSONfile.write(str(JSONFormatedContent))
+  JSONfile.close  
+#JSON_Write_Button=Button(root, text="Write JSON", command=write_JSONfile)
 #JSON_Write_Button.place(x=10, y=PositionY[6], width=600, height=25)   
 
 
 ########################################################### Bouton => Lance la fonction d'écriture du fichier JSON +  Lance HandrakeCLI  ################################################################
 def LaunchHandbrake():
   write_JSONfile()
-  cmd='C:\\Program Files\\HandBrake\\HandBrakeCLI.exe', r'--queue-import-file' ,Source_Browse_Entry.get()+r'\handbrake.JSON'
+  cmd='C:\\Program Files\\HandBrake\\HandBrakeCLI.exe', r'--queue-import-file' ,source_browse_Entry.get()+r'\handbrake.JSON'
   subprocess.Popen(cmd)
-LaunchHandbrake_Button=tk.Button(root, text="Launch Handbrake", command=LaunchHandbrake, pady=2, padx=10)
+LaunchHandbrake_Button=Button(root, text="Launch Queue in HandbrakeCLI", command=LaunchHandbrake, style="VAD.TButton")
 LaunchHandbrake_Button.place(x=10, y=PositionY[8], width=500, height=25) 
 
 ########################################################
