@@ -290,7 +290,7 @@ def generate_JSON_Press():
   global JSONFormatedContent
   JSONcontent=generate_JSON()
   JSONFormatedContent=json.dumps(JSONcontent, indent=2)
-generate_JSON_Button=Button(root, text="Generate HandbrakeCLI Queue File (JSON)", command=generate_JSON_Press, style="VAD.TButton")
+generate_JSON_Button=Button(root, text="Generate File", command=generate_JSON_Press, style="VAD.TButton")
 generate_JSON_Button.place(x=10, y=PositionY[7], width=290, height=25) 
 
 
@@ -298,7 +298,7 @@ def preview_JSON_press():
   global JSONFormatedContent
   Preview_Window(JSONFormatedContent)
 
-preview_Button=Button(root, text="Preview Queue File (JSON)", command=generate_JSON_Press, style="VAD.TButton")
+preview_Button=Button(root, text="Preview File", command=preview_JSON_press, style="VAD.TButton")
 preview_Button.place(x=310, y=PositionY[7], width=200, height=25) 
 
 
