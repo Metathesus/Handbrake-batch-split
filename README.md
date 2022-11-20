@@ -7,7 +7,7 @@ IMPORTANT: Download HandBrakeCLI.exe from official Website and put in your Handb
 How it works:
 - From HANDBRAKE
     1) Open a only one file
-    2) Apply your presets (including or not the chapter or time range to cut)
+    2) Apply your presets (including or not the frame/chapter or time range to cut)
     3) "Enqueue"
     4) From "Queue" go to "Options"
     5) "Export the queue (CLI Only)"
@@ -21,5 +21,3 @@ How it works:
           - Uncheck the files that will not be cutted and converted
     5) Click on "Generate JSON file and Preview" to check the new JSON file
     6) Click on "Launch HandBrakeCLI"
-
-
