@@ -1,3 +1,5 @@
+HandBrake Batch MultiCut
+
 Tool with GUI to batch split / cut files and convert with Handbrake CLI
 
 IMPORTANT: Download HandBrakeCLI.exe from official Website and put in your Handbrake install directory (C:\Program Files\HandBrake)
