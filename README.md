@@ -6,7 +6,7 @@ IMPORTANT: Download HandBrakeCLI.exe from official Website and put in your Handb
 
 How it works:
 - From HANDBRAKE
-    1) Open a file only
+    1) Open a only one file
     2) Apply your presets (including or not the range to cut)
     3) "Enqueue"
     4) From "Queue" go to "Options"
