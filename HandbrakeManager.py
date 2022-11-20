@@ -173,14 +173,13 @@ destination_browse_Button.place(x=520, y=PositionY[3], width=90, height=25)
 ######################       Entrée de temps / Définition des ranges avec champs de saisie et bouton + ############################################################
  
 #define times range   
-
+starts_time=[]
+ends_time=[]
+time_ranges_readable=[]
 def add_times_ranges():
   global starts_time
   global ends_time
   global time_ranges_readable
-  starts_time=[]
-  ends_time=[]
-  time_ranges_readable=[]
 
   try: starts_time
   except NameError:
